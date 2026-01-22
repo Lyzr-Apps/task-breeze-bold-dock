@@ -1,0 +1,32 @@
+{
+  "agent_name": "Task Assistant Agent",
+  "agent_id": "697176e5d6d0dcaec1119067",
+  "test_message": "I have 10 tasks due tomorrow and I'm feeling overwhelmed. How should I prioritize them?",
+  "expected_purpose": "assistant",
+  "timestamp": "2026-01-22T01:02:27.213402",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "answer": "Feeling overwhelmed is completely normal when you have a lot of tasks due at once! Start by listing each task and estimating how much time each will take. Next, identify which tasks are most important\u2014consider deadlines, potential consequences if not done, and any dependencies (tasks that need to be finished before others). Focus on completing urgent and important tasks first. Remember, it's okay to ask for help or renegotiate deadlines if possible.",
+      "tips": [
+        "Break tasks into smaller steps and tackle them one at a time.",
+        "Use a priority matrix (e.g., Eisenhower Matrix) to separate urgent/important tasks from less critical ones."
+      ],
+      "priority_suggestions": [
+        "Finish tasks that are urgent and have the highest consequences if not completed.",
+        "Tackle tasks that can be completed quickly for a sense of progress."
+      ],
+      "related_topics": [
+        "Time management",
+        "Focus techniques"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Task Assistant Agent",
+      "timestamp": "2024-06-09T19:13:02Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"answer\": \"Feeling overwhelmed is completely normal when you have a lot of tasks due at once! Start by listing each task and estimating how much time each will take. Next, identify which tasks are most important\u2014consider deadlines, potential consequences if not done, and any dependencies (tasks that need to be finished before others). Focus on completing urgent and important tasks first. Remember, it's okay to ask for help or renegotiate deadlines if possible.\",\n    \"tips\": [\n      \"Break tasks into smaller steps and tackle them one at a time.\",\n      \"Use a priority matrix (e.g., Eisenhower Matrix) to separate urgent/important tasks from less critical ones.\"\n    ],\n    \"priority_suggestions\": [\n      \"Finish tasks that are urgent and have the highest consequences if not completed.\",\n      \"Tackle tasks that can be completed quickly for a sense of progress.\"\n    ],\n    \"related_topics\": [\n      \"Time management\",\n      \"Focus techniques\"\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Task Assistant Agent\",\n    \"timestamp\": \"2024-06-09T19:13:02Z\"\n  }\n}"
+}

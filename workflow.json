@@ -1,0 +1,62 @@
+{
+  "workflow_name": "TaskFlow",
+  "workflow_type": "single_agent",
+  "nodes": [
+    {
+      "id": "user_input",
+      "type": "Input",
+      "label": "User Query",
+      "nodeCategory": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "id": "task_assistant_agent",
+      "type": "Agent",
+      "label": "Task Assistant Agent",
+      "nodeCategory": "agent",
+      "agent_id": "697176e5d6d0dcaec1119067",
+      "agent_name": "Task Assistant Agent",
+      "position": {
+        "x": 400,
+        "y": 200
+      }
+    },
+    {
+      "id": "response_output",
+      "type": "Output",
+      "label": "AI Response",
+      "nodeCategory": "end",
+      "position": {
+        "x": 700,
+        "y": 200
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "user_input",
+      "target": "task_assistant_agent"
+    },
+    {
+      "source": "task_assistant_agent",
+      "target": "response_output"
+    }
+  ],
+  "agents": [
+    {
+      "agent_id": "697176e5d6d0dcaec1119067",
+      "name": "Task Assistant Agent",
+      "type": "single",
+      "description": "Conversational AI that helps users organize tasks, suggests priorities, provides productivity tips, and answers questions about task management best practices",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "response_schema": "response_schemas/task_assistant_agent_response.json"
+    }
+  ],
+  "created_at": "2026-01-22T00:00:00Z"
+}
