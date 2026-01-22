@@ -25,7 +25,10 @@ import {
   Send,
   X,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  PlayCircle,
+  PauseCircle,
+  Circle
 } from 'lucide-react'
 import { callAIAgent } from '@/utils/aiAgent'
 import type { NormalizedAgentResponse } from '@/utils/aiAgent'
@@ -45,6 +48,7 @@ interface Task {
   completed: boolean
   priority: 'low' | 'medium' | 'high'
   category: string
+  status: 'not-started' | 'in-progress' | 'blocked' | 'completed'
   dueDate: Date
   createdAt: Date
 }
@@ -89,6 +93,47 @@ const getCategoryColor = (category: string) => {
   }
 }
 
+// Status configuration
+const getStatusConfig = (status: string) => {
+  switch (status) {
+    case 'not-started':
+      return {
+        label: 'Not Started',
+        icon: Circle,
+        color: 'text-gray-400',
+        bgColor: 'bg-gray-100 dark:bg-gray-800'
+      }
+    case 'in-progress':
+      return {
+        label: 'In Progress',
+        icon: PlayCircle,
+        color: 'text-blue-500',
+        bgColor: 'bg-blue-50 dark:bg-blue-950/30'
+      }
+    case 'blocked':
+      return {
+        label: 'Blocked',
+        icon: PauseCircle,
+        color: 'text-orange-500',
+        bgColor: 'bg-orange-50 dark:bg-orange-950/30'
+      }
+    case 'completed':
+      return {
+        label: 'Completed',
+        icon: Check,
+        color: 'text-green-500',
+        bgColor: 'bg-green-50 dark:bg-green-950/30'
+      }
+    default:
+      return {
+        label: 'Not Started',
+        icon: Circle,
+        color: 'text-gray-400',
+        bgColor: 'bg-gray-100 dark:bg-gray-800'
+      }
+  }
+}
+
 // Format date helper
 const formatDate = (date: Date) => {
   const today = new Date()
@@ -101,7 +146,20 @@ const formatDate = (date: Date) => {
 }
 
 // Task Card Component
-function TaskCard({ task, onToggle, onDelete }: { task: Task; onToggle: () => void; onDelete: () => void }) {
+function TaskCard({
+  task,
+  onToggle,
+  onDelete,
+  onStatusChange
+}: {
+  task: Task
+  onToggle: () => void
+  onDelete: () => void
+  onStatusChange: (status: Task['status']) => void
+}) {
+  const statusConfig = getStatusConfig(task.status)
+  const StatusIcon = statusConfig.icon
+
   return (
     <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 mb-3">
       <CardContent className="p-4">
@@ -127,6 +185,42 @@ function TaskCard({ task, onToggle, onDelete }: { task: Task; onToggle: () => vo
               <Badge variant="outline" className={cn("text-xs", getCategoryColor(task.category))}>
                 {task.category}
               </Badge>
+            </div>
+            <div className="mt-2">
+              <Select value={task.status} onValueChange={(value) => onStatusChange(value as Task['status'])}>
+                <SelectTrigger className={cn("h-7 text-xs w-auto min-w-[130px]", statusConfig.bgColor)}>
+                  <div className="flex items-center gap-1.5">
+                    <StatusIcon className={cn("w-3 h-3", statusConfig.color)} />
+                    <SelectValue />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="not-started">
+                    <div className="flex items-center gap-2">
+                      <Circle className="w-3 h-3 text-gray-400" />
+                      <span>Not Started</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="in-progress">
+                    <div className="flex items-center gap-2">
+                      <PlayCircle className="w-3 h-3 text-blue-500" />
+                      <span>In Progress</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="blocked">
+                    <div className="flex items-center gap-2">
+                      <PauseCircle className="w-3 h-3 text-orange-500" />
+                      <span>Blocked</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="completed">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Completed</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <Button
@@ -156,6 +250,7 @@ function QuickAddModal({
   const [title, setTitle] = useState('')
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
   const [category, setCategory] = useState('Personal')
+  const [status, setStatus] = useState<Task['status']>('not-started')
   const [dueDate, setDueDate] = useState<Date>(new Date())
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -166,12 +261,14 @@ function QuickAddModal({
       title,
       priority,
       category,
+      status,
       dueDate
     })
 
     setTitle('')
     setPriority('medium')
     setCategory('Personal')
+    setStatus('not-started')
     setDueDate(new Date())
     onClose()
   }
@@ -228,6 +325,41 @@ function QuickAddModal({
                 <SelectItem value="Work">Work</SelectItem>
                 <SelectItem value="Personal">Personal</SelectItem>
                 <SelectItem value="Shopping">Shopping</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Status</Label>
+            <Select value={status} onValueChange={(value) => setStatus(value as Task['status'])}>
+              <SelectTrigger className="mt-1.5">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="not-started">
+                  <div className="flex items-center gap-2">
+                    <Circle className="w-3 h-3 text-gray-400" />
+                    <span>Not Started</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="in-progress">
+                  <div className="flex items-center gap-2">
+                    <PlayCircle className="w-3 h-3 text-blue-500" />
+                    <span>In Progress</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="blocked">
+                  <div className="flex items-center gap-2">
+                    <PauseCircle className="w-3 h-3 text-orange-500" />
+                    <span>Blocked</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="completed">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-3 h-3 text-green-500" />
+                    <span>Completed</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -660,6 +792,7 @@ export default function Home() {
           completed: false,
           priority: 'high',
           category: 'Work',
+          status: 'in-progress',
           dueDate: new Date(),
           createdAt: new Date()
         },
@@ -669,6 +802,7 @@ export default function Home() {
           completed: false,
           priority: 'medium',
           category: 'Shopping',
+          status: 'not-started',
           dueDate: new Date(),
           createdAt: new Date()
         },
@@ -678,6 +812,7 @@ export default function Home() {
           completed: true,
           priority: 'low',
           category: 'Personal',
+          status: 'completed',
           dueDate: new Date(),
           createdAt: new Date()
         }
@@ -697,7 +832,7 @@ export default function Home() {
     const task: Task = {
       ...newTask,
       id: Date.now().toString(),
-      completed: false,
+      completed: newTask.status === 'completed',
       createdAt: new Date()
     }
     setTasks(prev => [...prev, task])
@@ -705,7 +840,21 @@ export default function Home() {
 
   const handleToggleTask = (id: string) => {
     setTasks(prev => prev.map(t =>
-      t.id === id ? { ...t, completed: !t.completed } : t
+      t.id === id ? {
+        ...t,
+        completed: !t.completed,
+        status: !t.completed ? 'completed' : 'not-started'
+      } : t
+    ))
+  }
+
+  const handleStatusChange = (id: string, status: Task['status']) => {
+    setTasks(prev => prev.map(t =>
+      t.id === id ? {
+        ...t,
+        status,
+        completed: status === 'completed'
+      } : t
     ))
   }
 
@@ -826,6 +975,7 @@ export default function Home() {
                     task={task}
                     onToggle={() => handleToggleTask(task.id)}
                     onDelete={() => handleDeleteTask(task.id)}
+                    onStatusChange={(status) => handleStatusChange(task.id, status)}
                   />
                 ))}
 
@@ -841,6 +991,7 @@ export default function Home() {
                         task={task}
                         onToggle={() => handleToggleTask(task.id)}
                         onDelete={() => handleDeleteTask(task.id)}
+                        onStatusChange={(status) => handleStatusChange(task.id, status)}
                       />
                     ))}
                   </>
